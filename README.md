@@ -19,18 +19,18 @@ Make sure that you have `vagrant` installed and the base box added,
 check [Vagrant](http://vagrantup.com/) website for more details.
 Usually is simple as:
 
-  $ gem install vagrant
-  $ vagrant box add base http://files.vagrantup.com/lucid32.box
+	$ gem install vagrant
+	$ vagrant box add base http://files.vagrantup.com/lucid32.box
 
 Clone this repository, update puppet modules, pick one machine that you want to
 start and run `vagrant up`. Vagrant + Puppet should take care of installing and
 configuring whatever is necessary for the server to run. Example:
 
-  $ git clone https://github.com/mavcunha/vagrant-preconfig-boxes.git vagrant-preconfi-boxes
-  $ cd vagrant-preconfig-boxes
-  $ git submodule update --init 
-  $ cd vagrant-preconfig-boxes/hbase-single
-  $ vagrant up
+	$ git clone https://github.com/mavcunha/vagrant-preconfig-boxes.git vagrant-preconfi-boxes
+	$ cd vagrant-preconfig-boxes
+	$ git submodule update --init 
+	$ cd vagrant-preconfig-boxes/hbase-single
+	$ vagrant up
 
 Puppet will install all binaries for the server (if not in the base
 box already) so it can take some minutes depending on your internet
