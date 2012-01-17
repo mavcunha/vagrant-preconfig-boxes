@@ -29,7 +29,7 @@ configuring whatever is necessary for the server to run. Example:
 	$ git clone https://github.com/mavcunha/vagrant-preconfig-boxes.git vagrant-preconfig-boxes
 	$ cd vagrant-preconfig-boxes
 	$ git submodule update --init 
-	$ cd vagrant-preconfig-boxes/hbase-single
+	$ cd hbase-single
 	$ vagrant up
 
 Puppet will install all binaries for the server (if not in the base
