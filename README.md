@@ -26,7 +26,7 @@ Clone this repository, update puppet modules, pick one machine that you want to
 start and run `vagrant up`. Vagrant + Puppet should take care of installing and
 configuring whatever is necessary for the server to run. Example:
 
-	$ git clone https://github.com/mavcunha/vagrant-preconfig-boxes.git vagrant-preconfi-boxes
+	$ git clone https://github.com/mavcunha/vagrant-preconfig-boxes.git vagrant-preconfig-boxes
 	$ cd vagrant-preconfig-boxes
 	$ git submodule update --init 
 	$ cd vagrant-preconfig-boxes/hbase-single
