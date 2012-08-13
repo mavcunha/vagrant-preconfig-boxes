@@ -1,3 +1,0 @@
-[submodule "hbase-single/modules"]
-	path = hbase-single/modules
-	url = git@github.com:mavcunha/puppet-modules.git
