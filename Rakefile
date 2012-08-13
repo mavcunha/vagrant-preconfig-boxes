@@ -5,19 +5,20 @@ BOXES = Dir[File.join(File.dirname(__FILE__),'/boxes/*/')].map { |f| File.basena
 task :default => [:help]
 
 task :boxes do
-  puts BOXES
+  puts "Boxes found:"
+  BOXES.each do |p|
+    puts "\t#{p}"
+  end
 end
 
 BOXES.each do |proj|
-
-  task "#{proj}.config" do
-    Rake::Task[:prepare].invoke(proj.to_s)
+  task "#{proj}.setup" do
+    Rake::Task[:puppet_modules].invoke(proj.to_s)
   end
 
 end
 
-
-task :prepare, :project do |task, args|
+task :puppet_modules, :project do |task, args|
   puppet = PuppetExec.new(boxes_path, args[:project])
   if !puppet.dependencies.empty?
     FileUtils.mkdir puppet.modulepath if !Dir.exists?(puppet.modulepath)
@@ -25,7 +26,6 @@ task :prepare, :project do |task, args|
     puppet.install_modules
   end
 end
-
 
 task :help do
   puts HELP
@@ -42,7 +42,8 @@ end
 
 BEGIN {
 HELP=<<-'EOH'
-You shall run ....
+ Run 'rake boxes' to list all available boxes
+ After finding a box run 'rake BOX.setup' to setup a box for the first time
 EOH
 
 }
