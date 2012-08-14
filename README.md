@@ -11,27 +11,29 @@ the machine or installing any software.
 
 ## Boxes
 
-* **hbase-single**: single instance hbase running.
+Check the `boxes` directory for more information.
+
+## Setting it up
+
+A `bundle install` should set up all gems needed.
 
 ## How to use
 
-Make sure that you have `vagrant` installed and the base box added,
-check [Vagrant](http://vagrantup.com/) website for more details.
-Usually is simple as:
+Make sure that you have `vagrant` installed (it should be bundler step above)
+and the base box added, check [Vagrant](http://vagrantup.com/) website for more
+details.Usually is simple as:
 
-	$ gem install vagrant
 	$ vagrant box add base http://files.vagrantup.com/lucid32.box
 
-Clone this repository, update puppet modules, pick one machine that you want to
-start and run `vagrant up`. Vagrant + Puppet should take care of installing and
-configuring whatever is necessary for the server to run. Example:
+I've setup it some rake tasks to help, here a brief description.
 
-	$ git clone https://github.com/mavcunha/vagrant-preconfig-boxes.git vagrant-preconfig-boxes
-	$ cd vagrant-preconfig-boxes
-	$ git submodule update --init 
-	$ cd hbase-single
-	$ vagrant up
+	$ rake boxes
 
-Puppet will install all binaries for the server (if not in the base
-box already) so it can take some minutes depending on your internet
-connection.
+It should a list of the boxes available, then what you need is to install the
+puppet (or chef in the future) dependencies for a certain box. Let's say you
+want to set up a box called `MYBOX`, you can use:
+
+	$ rake MYBOX.setup
+
+This should setup the box, `vagrant up` (on the box directory) should finish it
+and install other dependencies for that specific box.
