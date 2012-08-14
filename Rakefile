@@ -15,7 +15,6 @@ BOXES.each do |proj|
   task "#{proj}.setup" do
     Rake::Task[:puppet_modules].invoke(proj.to_s)
   end
-
 end
 
 task :puppet_modules, :project do |task, args|
