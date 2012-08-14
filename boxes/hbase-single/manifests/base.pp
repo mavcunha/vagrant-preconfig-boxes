@@ -1,8 +1,11 @@
 class base {
   include apt
+  include apt::update
   include stdlib
 
   group { 'puppet': ensure => 'present' }
+
+  Exec["apt_update"] -> Package <||>
 
   package {
     'curl':
@@ -10,10 +13,10 @@ class base {
     'openjdk-6-jdk':
       ensure => present;
     'hadoop-hbase':
-      ensure => 'present',
+      ensure  => 'present',
       require => [
-        Package['openjdk-6-jdk'],
-        File_line['JAVA_HOME'],
+        Package['openjdk-6-jdk'], 
+        File['java_home'],
         Apt::Source['cloudera']];
     'hadoop-hbase-master':
       ensure => 'present',
@@ -46,13 +49,12 @@ class base {
       require => [Package['hadoop-hbase-master']];
   }
 
-  file_line { 
-    'JAVA_HOME':
-    path => '/etc/environment',
-    line => "JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk" 
+  file { 
+  '/etc/profile.d/set_java_home.sh':
+    ensure  => present,
+    alias   => 'java_home',
+    content => 'export JAVA_HOME="/usr/lib/jvm/java-1.6.0-openjdk"';
   }
-
-  
 }
 
 include base
