@@ -35,5 +35,5 @@ want to set up a box called `MYBOX`, you can use:
 
 	$ rake MYBOX.setup
 
-This should setup the box, `vagrant up` (on the box directory) should finish it
+This should setup the box, `vagrant up` (inside the MYBOX directory) should finish it
 and install other dependencies for that specific box.
