@@ -6,14 +6,8 @@ BOXES = Dir[File.join(File.dirname(__FILE__),'/boxes/*/')].map { |f| File.basena
 
 task :default => [:help]
 
-task :boxes do
-  puts "Boxes found:"
-  BOXES.each do |p|
-    puts "\t#{p}"
-  end
-end
-
 BOXES.each do |proj|
+
   task "#{proj}.setup" do
     Rake::Task[:puppet_modules].invoke(proj.to_s)
   end
@@ -22,15 +16,42 @@ BOXES.each do |proj|
     Rake::Task["#{proj}.setup"].invoke
     Rake::Task[:vm_up].invoke(proj.to_s)
 
-    puts "You might now go to your box directory " + proj_dir proj
+    puts "You might now go to your box directory " + proj_dir(proj)
     puts "and connect to it by 'vagrant ssh'"
   end
 
   task "#{proj}.clean" do
-    FileUtils.rm_r Dir[File.join(proj_dir, proj, 'modules')]
-    vg_env(proj).cli('destroy','--force')
+    Rake::Task[:clean].invoke(proj.to_s)
   end
 
+end
+
+task :boxes do
+  puts "Boxes found:"
+  BOXES.each do |p|
+    puts "\t#{p}"
+  end
+end
+
+task :status do
+  puts "Showing status of all boxes"
+  BOXES.each do |p|
+    puts "#{p}: " + vg_env(p).primary_vm.state.to_s
+  end
+end
+
+task :clean, :project do |task, args|
+  puts "Cleaning up #{args[:project]} box"
+  vg_env(args[:project]).cli('destroy','--force')
+  FileUtils.rm_r Dir[File.join(proj_dir(args[:project]), 'modules')]
+end
+
+task :clean_all do
+  puts "Cleaning up all boxes"
+  BOXES.each do |p|
+    Rake::Task[:clean].reenable
+    Rake::Task[:clean].invoke p
+  end
 end
 
 task :puppet_modules, :project do |task, args|
@@ -62,7 +83,7 @@ def boxes_path
 end
 
 def vg_env(project)
-  Vagrant::Environment.new(:cwd => proj_dir project)
+  Vagrant::Environment.new(:cwd => proj_dir(project))
 end
 
 def proj_dir(project)
@@ -77,6 +98,9 @@ HELP=<<-'EOH'
 
  rake MYBOX.setup       Will install puppet deps
  rake MYBOX.provision   Runs setup and vagrant up
+ rake MYBOX.clean       Will destroy the VM and delete downloaded files.
+ rake clean_all         Will perform clean for all boxes
+ rake status            Vagrant status for all boxes.
 
 EOH
 
