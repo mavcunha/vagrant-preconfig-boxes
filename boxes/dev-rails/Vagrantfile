@@ -2,15 +2,16 @@
 
 Vagrant::Config.run do |config|
 
-  config.vm.box = "precise"
-  config.vm.box_url = "http://files.vagrantup.com/precise64.box"
+  config.vm.box = "dev-rails"
+  config.vm.box_url = "http://files.vagrantup.com/precise32.box"
 
-  #config.vm.share_folder "v-data", "/vagrant_data", "../data"
+  config.vm.share_folder "v-workspace", "/workspace", "./workspace", :create => true
+
+  config.vm.forward_port 3000, 3000
 
   config.vm.provision :puppet do |puppet|
     puppet.manifests_path = "manifests"
     puppet.manifest_file  = "default.pp"
     puppet.module_path = "modules" 
   end
-
 end

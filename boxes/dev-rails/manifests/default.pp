@@ -1,18 +1,12 @@
 $ar_databases = ['activerecord_unittest', 'activerecord_unittest2']
 
 # Make sure apt-get -y update runs before anything else.
-stage { 'preinstall':
-  before => Stage['main']
-}
+stage { 'preinstall': before => Stage['main'] }
 
 class apt_get_update {
   exec { '/usr/bin/apt-get -y update':
     user => 'root'
   }
-}
-
-class { 'apt_get_update':
-  stage => preinstall
 }
 
 class install_sqlite3 {
@@ -25,9 +19,14 @@ class install_sqlite3 {
   }
 }
 
+class install_vim {
+  package { 'vim':
+    ensure => installed;
+  }
+}
+
 class install_mysql {
   class { 'mysql': }
-
   class { 'mysql::server':
     config_hash => { 'root_password' => '' }
   }
@@ -55,7 +54,6 @@ class install_mysql {
 
 class install_postgres {
   class { 'postgresql': }
-
   class { 'postgresql::server': }
 
   pg_database { $ar_databases:
@@ -104,6 +102,7 @@ class install_nokogiri_dependencies {
   }
 }
 
+class { 'apt_get_update': stage => preinstall }
 class { 'install_sqlite3': }
 class { 'install_mysql': }
 class { 'install_postgres': }
@@ -111,3 +110,4 @@ class { 'install_core_packages': }
 class { 'install_ruby': }
 class { 'install_nokogiri_dependencies': }
 class { 'memcached': }
+class { 'install_vim': }
