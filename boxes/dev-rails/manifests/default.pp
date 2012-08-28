@@ -102,6 +102,23 @@ class install_nokogiri_dependencies {
   }
 }
 
+class bash_customized_functions( $user ) {
+ exec {
+   "/usr/bin/git clone git://github.com/mavcunha/bash.git /home/$user/bash":
+     user    => $user,
+     alias   => 'github_bash_checkout',
+     creates => "/home/$user/bash";
+ }
+
+ file {
+   "/home/$user/.bash_profile":
+     alias   => 'bash_profile',
+     replace => no,
+     ensure  => present,
+     content =>  "BASH_LOAD_ROOT=/home/$user/bash\n.  \${BASH_LOAD_ROOT}/load_bash";
+ }
+}
+
 class { 'apt_get_update': stage => preinstall }
 class { 'install_sqlite3': }
 class { 'install_mysql': }
@@ -111,3 +128,4 @@ class { 'install_ruby': }
 class { 'install_nokogiri_dependencies': }
 class { 'memcached': }
 class { 'install_vim': }
+class { 'bash_customized_functions': user => 'vagrant' }
