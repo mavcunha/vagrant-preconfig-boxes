@@ -7,7 +7,6 @@ BOXES = Dir[File.join(File.dirname(__FILE__),'/boxes/*/')].map { |f| File.basena
 task :default => [:help]
 
 BOXES.each do |proj|
-
   task "#{proj}.setup" do
     Rake::Task[:puppet_modules].invoke(proj.to_s)
   end
@@ -101,6 +100,9 @@ HELP=<<-'EOH'
  rake MYBOX.clean       Will destroy the VM and delete downloaded files.
  rake clean_all         Will perform clean for all boxes
  rake status            Vagrant status for all boxes.
+ rake test              Runs all tests on spec/ directory.
+ rake boxes             Lists all boxes.
+ rake help              Display this help message.
 
 EOH
 
