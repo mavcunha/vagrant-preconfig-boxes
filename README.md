@@ -21,7 +21,7 @@ A `bundle install` should set up all gems needed.
 
 Make sure that you have `vagrant` installed (it should be bundler step above)
 and the base box added, check [Vagrant](http://vagrantup.com/) website for more
-details.Usually is simple as:
+details. Usually is simple as:
 
 	$ vagrant box add base http://files.vagrantup.com/lucid32.box
 
