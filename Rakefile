@@ -74,7 +74,7 @@ task :help do
 end
 
 task :test do
-  sh 'bundle exec rspec spec'
+  sh 'bundle exec rspec --color spec'
 end
 
 def boxes_path 
