@@ -6,8 +6,8 @@ BOXES = Dir[File.join(File.dirname(__FILE__),'/boxes/*/')].map { |f| File.basena
 
 task :default => [:help]
 
+# Individual commands, they apply for a single box.
 BOXES.each do |proj|
-
   desc "Fetch puppet modules for a #{proj} box" 
   task "#{proj}.setup" do
     Rake::Task[:puppet_modules].invoke(proj.to_s)
@@ -20,9 +20,9 @@ BOXES.each do |proj|
   end
 
   desc "Destroy #{proj} box" 
-  task "#{proj}.clean" do
+  task "#{proj}.destroy" do
     if confirmed?("destroy #{proj}")
-      Rake::Task[:clean].invoke proj.to_s
+      Rake::Task[:destroy].invoke proj.to_s
     end
   end
 
@@ -37,13 +37,20 @@ BOXES.each do |proj|
       Rake::Task[:vg_cli_exec].invoke(proj.to_s, cmd)
     end
   end
-
 end
 
-task :boxes do
+# Global commands, they apply for all boxes.
+task :list do
   puts "Boxes found:"
   BOXES.each do |p|
     puts "\t#{p}"
+  end
+end
+
+task :suspend do 
+  BOXES.each do |b|
+    Rake::Task[:vg_cli_exec].reenable
+    Rake::Task[:vg_cli_exec].invoke(b, 'suspend')
   end
 end
 
@@ -55,18 +62,20 @@ task :status do
   end
 end
 
-task :clean_all do
+task :destroy do
   if confirmed?('destroy all boxes')
     puts "Destroying all boxes..."
     BOXES.each do |p|
-      Rake::Task[:clean].reenable
-      Rake::Task[:clean].invoke p
+      Rake::Task[:destroy].reenable
+      Rake::Task[:destroy].invoke p
       puts "#{p}: destroyed"
     end
     Rake::Task[:status].invoke
   end
 end
 
+# Tasks that are invoked internally, although is possible to invoke them
+# through the command line.
 task :single_status, :project do |t, args|
   puts "#{args[:project]}: " + vg_env(args[:project]).primary_vm.state.to_s
 end
@@ -76,10 +85,9 @@ task :vg_cli_exec, [:project, :cmd] do |t,args|
   vg_env(args[:project]).cli(args[:cmd])
 end
 
-task :clean, :project do |task, args|
-  puts "Cleaning up #{args[:project]} box"
+task :destroy, :project do |task, args|
+  puts "Destroying #{args[:project]} box"
   vg_env(args[:project]).cli('destroy','--force')
-  FileUtils.rm_r Dir[File.join(proj_dir(args[:project]), 'modules')]
 end
 
 task :puppet_modules, :project do |task, args|
@@ -119,11 +127,26 @@ end
 
 BEGIN {
 HELP=<<-'EOH'
- rake boxes             Lists all boxes.
- rake status            Vagrant status for all boxes.
- rake clean_all         Destroy all boxes! Be careful.
+There are two ways to issue commands, for all boxes or for a single box.
 
- rake -T                To list tasks for single boxes.
+For all boxes:
+ rake list             Lists all boxes.
+ rake status            Vagrant status for all boxes.
+ rake destroy           Destroy all boxes! Be careful.
+
+For single boxes use [box name].[command], i.e. 'rake dev.up'
+ rake [box].setup       Will run puppet and setup it's modules dependencies.
+ rake [box].provision   Will run 'setup' and than 'vagrant provision' on the box.
+ rake [box].destroy     Destroy a specific box.
+ rake [box].status      Shows current status.
+ rake [box].suspend     Suspend a box.
+ rake [box].resume      Resume a box.
+ rake [box].ssh         SSH into a box.
+ rake [box].reload      Will reboot a box.
+ rake [box].halt        Will poweroff a box.
+ rake [box].up          Will start a box, box will be created if needed.
+ 
+ rake -T                Will list all individual commands for all available boxes.
 
  rake help              Display this help message.
 
