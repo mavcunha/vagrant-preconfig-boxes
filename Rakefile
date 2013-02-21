@@ -77,7 +77,11 @@ end
 # Tasks that are invoked internally, although is possible to invoke them
 # through the command line.
 task :single_status, :project do |t, args|
-  puts "#{args[:project]}: " + vg_env(args[:project]).primary_vm.state.to_s
+  print "#{args[:project]}: "
+  vg_env(args[:project]).vms.each do |name, vm| 
+    print "[#{name}: " + vm.state.to_s + "] "
+  end
+  puts ""
 end
 
 task :vg_cli_exec, [:project, :cmd] do |t,args|
